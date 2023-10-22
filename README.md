@@ -1,7 +1,7 @@
 # Battleship State Machine
 
 This project was created by Quinn Toogood in support of their application
-to the BBC. This codebase contains a state machine that manages a game of battleship
+to the BBC. This codebase contains a state machine that manages a game of battleship.
 
 ## Setup and Build
 

@@ -1,5 +1,8 @@
 package job.interview.model;
 
+import job.interview.exception.InvalidCoordinateException;
+import job.interview.exception.InvalidPlacementException;
+import job.interview.exception.InvalidShotException;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
@@ -63,6 +66,148 @@ public class Board {
             boardSpaceList.add(Collections.unmodifiableList(Arrays.asList(row)));
         });
         return Collections.unmodifiableList(boardSpaceList);
+    }
+
+    /**
+     * Returns true if all ships have been destroyed.
+     *
+     * @return whether all ships on the board have been destroyed.
+     */
+    public boolean isGameOver() {
+        return ships.stream().allMatch(Ship::isDestroyed);
+    }
+
+
+    /**
+     * Adds a new battleship to the board. We do this by choosing a 'start space'
+     * and then hanging the ship either horizontally or vertically from it.
+     * <p>
+     * Ships will always hang down when vertical, or to the right when horizontal.
+     *
+     * @param placement - Object containing ship placement details.
+     * @throws InvalidPlacementException - exception thrown when invalid placement details are provided.
+     */
+    public Ship placeShip(ShipPlacement placement) throws InvalidPlacementException {
+        // First validate the placement is physically possible on the board.
+        validatePlacement(placement);
+        var startingX = placement.getStartingX();
+        var startingY = placement.getStartingY();
+        // Create our new ship.
+        var ship = new Ship();
+        var shipSpaces = ship.getSpaces();
+        // iterate through the spaces occupied by the ship and add them.
+        if (placement.getOrientation() == Orientation.HORIZONTAL) {
+            for (int x = startingX; x < startingX + placement.getLength(); x++) {
+                var currentSpace = boardSpaces[x][startingY];
+                if (currentSpace.isContainsShip()) {
+                    var message = "Attempted to place a ship on top of another - ship already exists at space " + startingX + ", " + startingY;
+                    log.error(message);
+                    throw new InvalidPlacementException(message);
+                }
+                currentSpace.setContainsShip(true);
+                shipSpaces.add(currentSpace);
+            }
+        } else if (placement.getOrientation() == Orientation.VERTICAL) {
+            for (int y = startingY; y < startingY + placement.getLength(); y++) {
+                var currentSpace = boardSpaces[startingX][y];
+                if (currentSpace.isContainsShip()) {
+                    var message = "Attempted to place a ship on top of another - ship already exists at space " + startingX + ", " + startingY;
+                    log.error(message);
+                    throw new InvalidPlacementException(message);
+                }
+                currentSpace.setContainsShip(true);
+                shipSpaces.add(currentSpace);
+            }
+        } else {
+            var message = "Invalid orientation supplied " + placement.getOrientation();
+            log.error(message);
+            throw new InvalidPlacementException(message);
+        }
+        // Add newly created ship to the set of ships in the game.
+        ships.add(ship);
+        return ship;
+    }
+
+    /**
+     * Function to handle checking whether a ship placement is valid.
+     *
+     * @param placement Object containing details of ship placement.
+     * @throws InvalidPlacementException - Exception to be thrown in invalid placement
+     */
+    private void validatePlacement(ShipPlacement placement) throws InvalidPlacementException {
+        var x = placement.getStartingX();
+        var y = placement.getStartingY();
+        var length = placement.getLength();
+        var orientation = placement.getOrientation();
+
+        try {
+            validateBoardValue(length);
+            if (length == 0) {
+                throw new InvalidPlacementException("Length of ship cannot be zero.");
+            }
+            validateBoardValue(x);
+            validateBoardValue(y);
+            if (orientation == Orientation.HORIZONTAL) {
+                validateBoardValue(x + length);
+            } else if (orientation == Orientation.VERTICAL) {
+                validateBoardValue(y + length);
+            } else {
+                throw new InvalidPlacementException("Invalid orientation value provided");
+            }
+        } catch (InvalidCoordinateException e) {
+            var message = "Invalid ship placement attempted with values - X: " + x + " Y: " + y + " Length: " + length
+                    + " Orientation: " + orientation;
+            log.error(message);
+            throw new InvalidPlacementException(message, e);
+        }
+    }
+
+    /**
+     * Given a set of co-ordinates, attempt an attack at this position.
+     *
+     * @param x X co-ordinate to attack.
+     * @param y Y co-ordinate to attack.
+     * @return Whether the shot was a hit.
+     * @throws InvalidShotException When the shot is pointed at invalid co-ordinates, or an already shot space.
+     */
+    public boolean attackPosition(int x, int y) throws InvalidShotException {
+        // First check the co-ordinates provided are valid.
+        try {
+            validateBoardValue(x);
+            validateBoardValue(y);
+        } catch (InvalidCoordinateException e) {
+            var message = "Invalid shot attempted at co-ordinates " + x + ", " + y;
+            log.error(message);
+            throw new InvalidShotException(message, e);
+        }
+
+        var attackedSpace = boardSpaces[x][y];
+
+        // If we've already shot at this space, throw an exception.
+        if (attackedSpace.isFiredUpon()) {
+            var message = "Attempted to shoot a space already fired on.";
+            log.warn(message);
+            throw new InvalidShotException(message);
+        }
+
+        // Otherwise, mark the board as fired upon.
+        attackedSpace.setFiredUpon(true);
+
+        // Return whether the shot was a hit.
+        return attackedSpace.isContainsShip();
+    }
+
+    /**
+     * Checks whether a given value fits on the board
+     *
+     * @param value Value to be checked.
+     */
+    private void validateBoardValue(int value) throws InvalidCoordinateException {
+        if (value < 0 || value > size) {
+            var message = "Value " + value + " does not fit on the board";
+            log.error(message);
+            throw new InvalidCoordinateException(message);
+        }
     }
 
 }
