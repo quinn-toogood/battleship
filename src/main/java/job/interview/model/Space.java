@@ -7,7 +7,6 @@ import lombok.*;
  */
 @Getter
 @RequiredArgsConstructor
-@EqualsAndHashCode
 @ToString
 public class Space {
 

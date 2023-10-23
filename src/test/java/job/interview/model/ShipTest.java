@@ -3,6 +3,9 @@ package job.interview.model;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+/**
+ * Tests for {@link Ship} class
+ */
 public class ShipTest {
 
     /**

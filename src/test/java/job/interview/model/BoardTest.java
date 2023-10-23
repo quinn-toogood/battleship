@@ -8,6 +8,9 @@ import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 
+/**
+ * Tests for {@link Board} class
+ */
 public class BoardTest {
 
     /**

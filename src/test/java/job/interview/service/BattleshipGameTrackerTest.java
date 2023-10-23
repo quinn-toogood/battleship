@@ -13,7 +13,7 @@ import org.mockito.Mockito;
 import java.lang.reflect.Field;
 
 /**
- * Tests for the Battleship State Tracker.
+ * Tests for the {@link BattleshipGameTracker}.
  */
 public class BattleshipGameTrackerTest {
 
