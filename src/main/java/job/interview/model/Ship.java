@@ -10,15 +10,19 @@ import java.util.Set;
  */
 @Getter
 public class Ship {
+
+    /**
+     * The set of spaces that this ship occupies.
+     */
     private final Set<Space> spaces = new HashSet<>();
-    
+
     /**
      * Check if a ship is destroyed by seeing if all spaces referenced by the ship have been fired on.
      *
      * @return Whether the ship has been destroyed.
      */
     public boolean isDestroyed() {
-        return spaces.stream().allMatch(Space::isFiredUpon);
+        return !spaces.isEmpty() && spaces.stream().allMatch(Space::isFiredUpon);
     }
 
 }

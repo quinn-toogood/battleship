@@ -4,6 +4,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NonNull;
 
+/**
+ * Object representing the details needed to place a ship on the board.
+ */
 @Getter
 @Builder
 public class ShipPlacement {

@@ -14,7 +14,7 @@ public class BoardTest {
      * For tests where the ship location does not matter, but a ship must be placed arbitrarily to allow firing.
      *
      * @param board Board to place ship on.
-     * @throws InvalidPlacementException Error if Placement is invalid.
+     * @throws InvalidPlacementException Exception thrown on invalid placement.
      */
     private static void placeShip(Board board) throws InvalidPlacementException {
         var startingX = 3;
@@ -32,7 +32,7 @@ public class BoardTest {
     /**
      * Tests that adding a ship in a horizontal position works correctly.
      *
-     * @throws InvalidPlacementException Exception thrown for invalid placement.
+     * @throws InvalidPlacementException Exception thrown on invalid placement.
      */
     @Test
     void testAddHorizontalShip() throws InvalidPlacementException {
@@ -90,7 +90,7 @@ public class BoardTest {
     /**
      * Tests that adding a ship in a vertical position works correctly.
      *
-     * @throws InvalidPlacementException Exception thrown for invalid placement.
+     * @throws InvalidPlacementException Exception thrown on invalid placement. Exception thrown for invalid placement.
      */
     @Test
     void testAddVerticalShip() throws InvalidPlacementException {
@@ -117,6 +117,7 @@ public class BoardTest {
         Assertions.assertTrue(ships.contains(addedShip), "Ship not included on the board.");
         Assertions.assertEquals(length, addedShip.getSpaces().size());
 
+        // To sanity check that X and Y are correct, test the values directly.
         var expectedSpaces = new ArrayList<Space>();
         expectedSpaces.add(boardSpaces.get(6).get(5));
         expectedSpaces.add(boardSpaces.get(6).get(7));
@@ -139,6 +140,9 @@ public class BoardTest {
         }
     }
 
+    /**
+     * Test that adding a ship with a negative X co-ordinate throws an error.
+     */
     @Test
     void testAddShipNegativeXCoord() {
         // Setup
@@ -156,6 +160,7 @@ public class BoardTest {
 
         // Test
         var exception = Assertions.assertThrows(InvalidPlacementException.class, () -> board.placeShip(placement));
+        var boardSpaces = board.readBoardSpaces();
 
         // Assert
         var message = "Invalid ship placement attempted with values - X: " + startingX + " Y: " + startingY + " Length: " + length
@@ -164,8 +169,14 @@ public class BoardTest {
         Assertions.assertEquals(message, exception.getMessage());
         Assertions.assertTrue(exception.getCause() instanceof InvalidCoordinateException, "Expected cause of error to be Invalid Co-ordinate Exception.");
         Assertions.assertEquals(causeMessage, exception.getCause().getMessage());
+
+        // Check that no ship has been placed.
+        Assertions.assertTrue(boardSpaces.stream().allMatch(row -> row.stream().noneMatch(Space::isContainsShip)));
     }
 
+    /**
+     * Test that adding a ship with an X co-ordinate larger than the size of the board throws an error.
+     */
     @Test
     void testAddShipLargeXCoord() {
         // Setup
@@ -183,6 +194,7 @@ public class BoardTest {
 
         // Test
         var exception = Assertions.assertThrows(InvalidPlacementException.class, () -> board.placeShip(placement));
+        var boardSpaces = board.readBoardSpaces();
 
         // Assert
         var message = "Invalid ship placement attempted with values - X: " + startingX + " Y: " + startingY + " Length: " + length
@@ -191,8 +203,14 @@ public class BoardTest {
         Assertions.assertEquals(message, exception.getMessage());
         Assertions.assertTrue(exception.getCause() instanceof InvalidCoordinateException, "Expected cause of error to be Invalid Co-ordinate Exception.");
         Assertions.assertEquals(causeMessage, exception.getCause().getMessage());
+
+        // Check that no ship has been placed.
+        Assertions.assertTrue(boardSpaces.stream().allMatch(row -> row.stream().noneMatch(Space::isContainsShip)));
     }
 
+    /**
+     * Test that adding a ship with zero X co-ordinate does not throw an error.
+     */
     @Test
     void testAddShipZeroXCoord() throws InvalidPlacementException {
         // Setup
@@ -234,6 +252,9 @@ public class BoardTest {
         }
     }
 
+    /**
+     * Test that adding a ship with negative Y co-ordinate throws an error.
+     */
     @Test
     void testAddShipNegativeYCoord() {
         // Setup
@@ -251,6 +272,7 @@ public class BoardTest {
 
         // Test
         var exception = Assertions.assertThrows(InvalidPlacementException.class, () -> board.placeShip(placement));
+        var boardSpaces = board.readBoardSpaces();
 
         // Assert
         var message = "Invalid ship placement attempted with values - X: " + startingX + " Y: " + startingY + " Length: " + length
@@ -259,8 +281,14 @@ public class BoardTest {
         Assertions.assertEquals(message, exception.getMessage());
         Assertions.assertTrue(exception.getCause() instanceof InvalidCoordinateException, "Expected cause of error to be Invalid Co-ordinate Exception.");
         Assertions.assertEquals(causeMessage, exception.getCause().getMessage());
+
+        // Check that no ship has been placed.
+        Assertions.assertTrue(boardSpaces.stream().allMatch(row -> row.stream().noneMatch(Space::isContainsShip)));
     }
 
+    /**
+     * Test adding a ship with a Y co-ordinate greater than the board size throws an error.
+     */
     @Test
     void testAddShipLargeYCoord() {
         // Setup
@@ -278,6 +306,7 @@ public class BoardTest {
 
         // Test
         var exception = Assertions.assertThrows(InvalidPlacementException.class, () -> board.placeShip(placement));
+        var boardSpaces = board.readBoardSpaces();
 
         // Assert
         var message = "Invalid ship placement attempted with values - X: " + startingX + " Y: " + startingY + " Length: " + length
@@ -286,8 +315,16 @@ public class BoardTest {
         Assertions.assertEquals(message, exception.getMessage());
         Assertions.assertTrue(exception.getCause() instanceof InvalidCoordinateException, "Expected cause of error to be Invalid Co-ordinate Exception.");
         Assertions.assertEquals(causeMessage, exception.getCause().getMessage());
+
+        // Check that no ship has been placed.
+        Assertions.assertTrue(boardSpaces.stream().allMatch(row -> row.stream().noneMatch(Space::isContainsShip)));
     }
 
+    /**
+     * Test that adding a ship with a Y co-ordinate of 0 does not throw an error.
+     *
+     * @throws InvalidPlacementException Exception thrown on invalid placement.
+     */
     @Test
     void testAddShipZeroYCoord() throws InvalidPlacementException {
         // Setup
@@ -329,6 +366,9 @@ public class BoardTest {
         }
     }
 
+    /**
+     * Test that adding a ship with a negative length throws an error.
+     */
     @Test
     void testAddShipNegativeLength() {
         // Setup
@@ -346,12 +386,19 @@ public class BoardTest {
 
         // Test
         var exception = Assertions.assertThrows(InvalidPlacementException.class, () -> board.placeShip(placement));
+        var boardSpaces = board.readBoardSpaces();
 
         // Assert
         var message = "Invalid ship length: " + length;
         Assertions.assertEquals(message, exception.getMessage());
+
+        // Check that no ship has been placed.
+        Assertions.assertTrue(boardSpaces.stream().allMatch(row -> row.stream().noneMatch(Space::isContainsShip)));
     }
 
+    /**
+     * Test that adding a ship with a length longer than the board throws an error.
+     */
     @Test
     void testAddShipLargeLength() {
         // Setup
@@ -369,12 +416,19 @@ public class BoardTest {
 
         // Test
         var exception = Assertions.assertThrows(InvalidPlacementException.class, () -> board.placeShip(placement));
+        var boardSpaces = board.readBoardSpaces();
 
         // Assert
         var message = "Invalid ship length: " + length;
         Assertions.assertEquals(message, exception.getMessage());
+
+        // Check that no ship has been placed.
+        Assertions.assertTrue(boardSpaces.stream().allMatch(row -> row.stream().noneMatch(Space::isContainsShip)));
     }
 
+    /**
+     * Test that adding a ship with zero length throws an error.
+     */
     @Test
     void testAddShipZeroLength() {
         // Setup
@@ -392,12 +446,42 @@ public class BoardTest {
 
         // Test
         var exception = Assertions.assertThrows(InvalidPlacementException.class, () -> board.placeShip(placement));
+        var boardSpaces = board.readBoardSpaces();
 
         // Assert
         var message = "Invalid ship length: " + length;
         Assertions.assertEquals(message, exception.getMessage());
+
+        // Check that no ship has been placed.
+        Assertions.assertTrue(boardSpaces.stream().allMatch(row -> row.stream().noneMatch(Space::isContainsShip)));
     }
 
+    /**
+     * Test that adding a ship with null orientation throws an error.
+     */
+    @Test
+    void testAddShipNullOrientation() {
+        // Setup
+        var startingX = 4;
+        var startingY = 5;
+        var length = 3;
+
+        // Test
+        var exception = Assertions.assertThrows(NullPointerException.class, () -> ShipPlacement.builder()
+                .startingX(startingX)
+                .startingY(startingY)
+                .length(length)
+                .orientation(null)
+                .build());
+
+        // Assert
+        var message = "orientation is marked non-null but is null";
+        Assertions.assertEquals(message, exception.getMessage());
+    }
+
+    /**
+     * Test that adding a ship that would extend past the edge horizontally throws an error.
+     */
     @Test
     void testAddShipFallOffEdgeHorizontal() {
         // Setup
@@ -415,6 +499,7 @@ public class BoardTest {
 
         // Test
         var exception = Assertions.assertThrows(InvalidPlacementException.class, () -> board.placeShip(placement));
+        var boardSpaces = board.readBoardSpaces();
 
         // Assert
         var message = "Invalid ship placement attempted with values - X: " + startingX + " Y: " + startingY + " Length: " + length
@@ -423,8 +508,14 @@ public class BoardTest {
         Assertions.assertEquals(message, exception.getMessage());
         Assertions.assertTrue(exception.getCause() instanceof InvalidCoordinateException, "Expected cause of error to be Invalid Co-ordinate Exception.");
         Assertions.assertEquals(causeMessage, exception.getCause().getMessage());
+
+        // Check that no ship has been placed.
+        Assertions.assertTrue(boardSpaces.stream().allMatch(row -> row.stream().noneMatch(Space::isContainsShip)));
     }
 
+    /**
+     * Test that adding a ship that would extend past the edge vertically throws an error.
+     */
     @Test
     void testAddShipFallOffEdgeVertical() {
         // Setup
@@ -442,6 +533,7 @@ public class BoardTest {
 
         // Test
         var exception = Assertions.assertThrows(InvalidPlacementException.class, () -> board.placeShip(placement));
+        var boardSpaces = board.readBoardSpaces();
 
         // Assert
         var message = "Invalid ship placement attempted with values - X: " + startingX + " Y: " + startingY + " Length: " + length
@@ -450,8 +542,17 @@ public class BoardTest {
         Assertions.assertEquals(message, exception.getMessage());
         Assertions.assertTrue(exception.getCause() instanceof InvalidCoordinateException, "Expected cause of error to be Invalid Co-ordinate Exception.");
         Assertions.assertEquals(causeMessage, exception.getCause().getMessage());
+
+
+        // Check that no ship has been placed.
+        Assertions.assertTrue(boardSpaces.stream().allMatch(row -> row.stream().noneMatch(Space::isContainsShip)));
     }
 
+    /**
+     * Test that adding two ships that overlap throws an error, and only the first ship is placed.
+     *
+     * @throws InvalidPlacementException Exception thrown on invalid placement.
+     */
     @Test
     void testOverlappingShipsError() throws InvalidPlacementException {
         // Setup
@@ -508,6 +609,12 @@ public class BoardTest {
 
     }
 
+    /**
+     * Test that attempting to place a ship after someone has already fired throws an error.
+     *
+     * @throws InvalidPlacementException Exception thrown on invalid placement.
+     * @throws InvalidShotException      Exception thrown on invalid shot.
+     */
     @Test
     void testCannotPlaceShipsAfterShooting() throws InvalidPlacementException, InvalidShotException {
         // Setup
@@ -562,6 +669,12 @@ public class BoardTest {
         }
     }
 
+    /**
+     * Test that a valid shot is shot successfully, and that a 'hit' is returned.
+     *
+     * @throws InvalidPlacementException Exception thrown on invalid placement.
+     * @throws InvalidShotException      Exception thrown on invalid shot.
+     */
     @Test
     void testShootValidShotHit() throws InvalidPlacementException, InvalidShotException {
         // Setup
@@ -597,6 +710,12 @@ public class BoardTest {
         }
     }
 
+    /**
+     * Tests that valid shot is shot successfully, then returns false for a missed shot.
+     *
+     * @throws InvalidPlacementException Exception thrown on invalid placement.
+     * @throws InvalidShotException      Exception thrown on invalid shot.
+     */
     @Test
     void testShootValidShotMiss() throws InvalidPlacementException, InvalidShotException {
         // Setup
@@ -635,6 +754,11 @@ public class BoardTest {
         }
     }
 
+    /**
+     * Test that a shot with a negative x co-ordinate throws an error.
+     *
+     * @throws InvalidPlacementException Exception thrown on invalid placement.
+     */
     @Test
     void testInvalidShotNegativeXCoord() throws InvalidPlacementException {
         // Setup
@@ -648,7 +772,7 @@ public class BoardTest {
 
         // Test
         var exception = Assertions.assertThrows(InvalidShotException.class, () -> board.attackPosition(shotX, shotY));
-
+        var boardSpaces = board.readBoardSpaces();
 
         // Assert
         var message = "Invalid shot attempted at co-ordinates " + shotX + ", " + shotY;
@@ -656,8 +780,17 @@ public class BoardTest {
         Assertions.assertEquals(message, exception.getMessage());
         Assertions.assertTrue(exception.getCause() instanceof InvalidCoordinateException, "Expected cause of error to be Invalid Co-ordinate Exception.");
         Assertions.assertEquals(causeMessage, exception.getCause().getMessage());
+
+
+        // Check that no shot has been fired.
+        Assertions.assertTrue(boardSpaces.stream().allMatch(row -> row.stream().noneMatch(Space::isFiredUpon)));
     }
 
+    /**
+     * Test that a shot with an X co-ordinate larger than the board throws an error.
+     *
+     * @throws InvalidPlacementException Exception thrown on invalid placement.
+     */
     @Test
     void testInvalidShotLargeXCoord() throws InvalidPlacementException {
         // Setup
@@ -671,7 +804,7 @@ public class BoardTest {
 
         // Test
         var exception = Assertions.assertThrows(InvalidShotException.class, () -> board.attackPosition(shotX, shotY));
-
+        var boardSpaces = board.readBoardSpaces();
 
         // Assert
         var message = "Invalid shot attempted at co-ordinates " + shotX + ", " + shotY;
@@ -679,8 +812,16 @@ public class BoardTest {
         Assertions.assertEquals(message, exception.getMessage());
         Assertions.assertTrue(exception.getCause() instanceof InvalidCoordinateException, "Expected cause of error to be Invalid Co-ordinate Exception.");
         Assertions.assertEquals(causeMessage, exception.getCause().getMessage());
+
+        // Check that no shot has been fired.
+        Assertions.assertTrue(boardSpaces.stream().allMatch(row -> row.stream().noneMatch(Space::isFiredUpon)));
     }
 
+    /**
+     * Tests that a shot with a negative Y co-ordinate throws an error.
+     *
+     * @throws InvalidPlacementException Exception thrown on invalid placement.
+     */
     @Test
     void testInvalidShotNegativeYCoord() throws InvalidPlacementException {
         // Setup
@@ -694,7 +835,7 @@ public class BoardTest {
 
         // Test
         var exception = Assertions.assertThrows(InvalidShotException.class, () -> board.attackPosition(shotX, shotY));
-
+        var boardSpaces = board.readBoardSpaces();
 
         // Assert
         var message = "Invalid shot attempted at co-ordinates " + shotX + ", " + shotY;
@@ -702,8 +843,16 @@ public class BoardTest {
         Assertions.assertEquals(message, exception.getMessage());
         Assertions.assertTrue(exception.getCause() instanceof InvalidCoordinateException, "Expected cause of error to be Invalid Co-ordinate Exception.");
         Assertions.assertEquals(causeMessage, exception.getCause().getMessage());
+
+        // Check that no shot has been fired.
+        Assertions.assertTrue(boardSpaces.stream().allMatch(row -> row.stream().noneMatch(Space::isFiredUpon)));
     }
 
+    /**
+     * Test that a shot with a Y co-ordinate larger than the board throws an error.
+     *
+     * @throws InvalidPlacementException Exception thrown on invalid placement.
+     */
     @Test
     void testInvalidShotLargeYCoord() throws InvalidPlacementException {
         // Setup
@@ -717,7 +866,7 @@ public class BoardTest {
 
         // Test
         var exception = Assertions.assertThrows(InvalidShotException.class, () -> board.attackPosition(shotX, shotY));
-
+        var boardSpaces = board.readBoardSpaces();
 
         // Assert
         var message = "Invalid shot attempted at co-ordinates " + shotX + ", " + shotY;
@@ -725,8 +874,18 @@ public class BoardTest {
         Assertions.assertEquals(message, exception.getMessage());
         Assertions.assertTrue(exception.getCause() instanceof InvalidCoordinateException, "Expected cause of error to be Invalid Co-ordinate Exception.");
         Assertions.assertEquals(causeMessage, exception.getCause().getMessage());
+
+
+        // Check that no shot has been fired.
+        Assertions.assertTrue(boardSpaces.stream().allMatch(row -> row.stream().noneMatch(Space::isFiredUpon)));
     }
 
+    /**
+     * Test that a shot at a position that has already been fired upon throws an error.
+     *
+     * @throws InvalidShotException      Exception thrown on invalid shot.
+     * @throws InvalidPlacementException Exception thrown on invalid placement.
+     */
     @Test
     void testInvalidShotDuplicateError() throws InvalidShotException, InvalidPlacementException {
         // Setup
@@ -742,12 +901,14 @@ public class BoardTest {
         board.attackPosition(shotX, shotY);
         var exception = Assertions.assertThrows(InvalidShotException.class, () -> board.attackPosition(shotX, shotY));
 
-
         // Assert
         var message = "Attempted to shoot a space already fired on at co-ordinates " + shotX + ", " + shotY;
         Assertions.assertEquals(message, exception.getMessage());
     }
 
+    /**
+     * Test that a shot cannot be fired until at least one ship is placed.
+     */
     @Test
     void testInvalidShotNoShips() {
         // Setup
@@ -759,13 +920,23 @@ public class BoardTest {
 
         // Test
         var exception = Assertions.assertThrows(InvalidShotException.class, () -> board.attackPosition(shotX, shotY));
-
+        var boardSpaces = board.readBoardSpaces();
 
         // Assert
         var message = "Cannot fire a shot before any ships are placed.";
         Assertions.assertEquals(message, exception.getMessage());
+
+        // Check that no shot has been fired.
+        Assertions.assertTrue(boardSpaces.stream().allMatch(row -> row.stream().noneMatch(Space::isFiredUpon)));
+
     }
 
+    /**
+     * Test that game over is marked when two ships exist and have been destroyed.
+     *
+     * @throws InvalidPlacementException Exception thrown on invalid placement.
+     * @throws InvalidShotException      Exception thrown on invalid shot.
+     */
     @Test
     void testGameOverTwoShips() throws InvalidPlacementException, InvalidShotException {
         // Setup
@@ -814,6 +985,12 @@ public class BoardTest {
         Assertions.assertTrue(isGameOver, "Game not marked as over after destroying both ships.");
     }
 
+    /**
+     * Test that game over is not marked when there are two ships and one is destroyed.
+     *
+     * @throws InvalidPlacementException Exception thrown on invalid placement.
+     * @throws InvalidShotException      Exception thrown on invalid shot.
+     */
     @Test
     void testNotGameOverAfterOneShipDestroyed() throws InvalidPlacementException, InvalidShotException {
         // Setup
@@ -856,5 +1033,20 @@ public class BoardTest {
 
         // Assert
         Assertions.assertFalse(isGameOver, "Game incorrectly marked as over after destroying one ship.");
+    }
+
+    /**
+     * Test game is not marked over unless at least one ship has been placed.
+     */
+    @Test
+    void testNotGameOverIfNoShipsPlaced() {
+        // Setup
+        var board = new Board();
+
+        // Test
+        var isGameOver = board.isGameOver();
+
+        // Assert
+        Assertions.assertFalse(isGameOver, "Game over should not be marked if no ships have been placed yet.");
     }
 }

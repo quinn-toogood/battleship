@@ -1,7 +1,7 @@
 package job.interview.exception;
 
 /**
- * Error to be thrown when an invalid ship is attempted to be placed
+ * Error to be thrown when an invalid shot is attempted.
  */
 public class InvalidShotException extends Exception {
     public InvalidShotException(String message) {

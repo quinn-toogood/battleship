@@ -81,7 +81,7 @@ public class Board {
      * @return whether all ships on the board have been destroyed.
      */
     public boolean isGameOver() {
-        return ships.stream().allMatch(Ship::isDestroyed);
+        return !ships.isEmpty() && ships.stream().allMatch(Ship::isDestroyed);
     }
 
 
