@@ -3,6 +3,8 @@ package job.interview.model;
 import job.interview.exception.InvalidCoordinateException;
 import job.interview.exception.InvalidPlacementException;
 import job.interview.exception.InvalidShotException;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
@@ -14,6 +16,8 @@ import java.util.List;
  * Representation of a battleship game board
  */
 @Slf4j
+@EqualsAndHashCode
+@ToString
 public class Board {
 
     /**

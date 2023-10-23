@@ -1,6 +1,8 @@
 package job.interview.model;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.ToString;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -9,6 +11,8 @@ import java.util.Set;
  * Representation of a ship on the board - considered as a reference to a number of spaces.
  */
 @Getter
+@EqualsAndHashCode
+@ToString
 public class Ship {
 
     /**

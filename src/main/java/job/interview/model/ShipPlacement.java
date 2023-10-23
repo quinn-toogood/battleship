@@ -1,14 +1,14 @@
 package job.interview.model;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NonNull;
+import lombok.*;
 
 /**
  * Object representing the details needed to place a ship on the board.
  */
 @Getter
 @Builder
+@EqualsAndHashCode
+@ToString
 public class ShipPlacement {
 
     /**

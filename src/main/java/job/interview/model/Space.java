@@ -1,15 +1,14 @@
 package job.interview.model;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 /**
  * Representation of a Space on the game board
  */
 @Getter
 @RequiredArgsConstructor
+@EqualsAndHashCode
+@ToString
 public class Space {
 
     /**
