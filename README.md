@@ -17,8 +17,16 @@ have been included.
 
 This project contains the maven wrapper, so can be built and tested with:
 
+In powershell or bash:
+
 ```bash
 ./mvnw clean install
+```
+
+In cmd:
+
+```cmd
+mvnw clean install
 ```
 
 The main method is empty. The functionality of the state tracker can be inspected by the unit tests.
@@ -27,6 +35,14 @@ The main method is empty. The functionality of the state tracker can be inspecte
 
 Tests can be executed separately with the maven test phase:
 
+In powershell or bash:
+
 ```bash
 ./mvnw test
+```
+
+In cmd:
+
+```cmd
+mvnw clean install
 ```
